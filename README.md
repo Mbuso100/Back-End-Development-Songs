@@ -58,20 +58,3 @@ MONGODB_SERVICE=127.0.0.1:27017 python -m pytest -p no:cacheprovider
 Tests use real MongoDB and a temporary database with fresh seed data per test;
 the temporary database is removed after the suite. Importing the starter app
 still reseeds its development collection before the test fixtures run.
-
-## Coursera submission
-
-- Keep the repository public and named `Back-End-Development-Songs`, created
-  using the course template. Submit the public README URL for AI grading or the
-  repository URL for peer grading.
-- Push the implementation branch, open a pull request into `main`, merge it,
-  and delete the branch after merging, as instructed by the lab.
-- For AI grading, submit actual curl output in text files named
-  `songs-ex1-health-curl`, `songs-ex2-get-song-curl`,
-  `songs-ex5-put-song-passing`, and `songs-ex6-delete-song-passing`.
-- For peer grading, capture the corresponding successful curl responses as
-  `.jpg` or `.png` screenshots. The lab spells the PUT screenshot filename
-  `songs-ex5--put-song-passing` (two hyphens); use the current submission form's
-  requested spelling. Upload the files through Coursera.
-
-Publishing this cloud environment does not push code or submit Coursera work.
