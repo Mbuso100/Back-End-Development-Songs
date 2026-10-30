@@ -57,3 +57,58 @@ def parse_json(data):
 def health():
     """Report that the Songs API is running."""
     return jsonify(status='OK'), 200
+
+
+@app.route('/count', methods=['GET'])
+def count():
+    """Count the documents in the songs collection."""
+    return jsonify(count=db.songs.count_documents({})), 200
+
+
+@app.route('/song', methods=['GET'])
+def songs():
+    """List songs using MongoDB Extended JSON for document IDs."""
+    return jsonify(songs=parse_json(list(db.songs.find({})))), 200
+
+
+@app.route('/song/<int:id>', methods=['GET'])
+def get_song_by_id(id):
+    song = db.songs.find_one({'id': id})
+    if song is None:
+        return jsonify(message='song with id not found'), 404
+    return jsonify(parse_json(song)), 200
+
+
+@app.route('/song', methods=['POST'])
+def create_song():
+    song = request.get_json()
+    if not isinstance(song, dict) or 'id' not in song:
+        abort(400)
+    if db.songs.find_one({'id': song['id']}) is not None:
+        return jsonify(Message=f"song with id {song['id']} already present"), 302
+    result = db.songs.insert_one(song)
+    return jsonify(parse_json({'inserted id': result.inserted_id})), 201
+
+
+@app.route('/song/<int:id>', methods=['PUT'])
+def update_song(id):
+    song = request.get_json()
+    if not isinstance(song, dict):
+        abort(400)
+    existing_song = db.songs.find_one({'id': id})
+    if existing_song is None:
+        return jsonify(message='song not found'), 404
+    result = db.songs.update_one({'id': id}, {'$set': song})
+    if result.modified_count == 0:
+        return jsonify(message='song found, but nothing updated'), 200
+    # Read by MongoDB _id, since the incoming fields may include a new id.
+    updated_song = db.songs.find_one({'_id': existing_song['_id']})
+    return jsonify(parse_json(updated_song)), 201
+
+
+@app.route('/song/<int:id>', methods=['DELETE'])
+def delete_song(id):
+    result = db.songs.delete_one({'id': id})
+    if result.deleted_count == 0:
+        return jsonify(message='song not found'), 404
+    return '', 204
