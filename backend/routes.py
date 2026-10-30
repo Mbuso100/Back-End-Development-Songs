@@ -51,3 +51,9 @@ def parse_json(data):
 ######################################################################
 # INSERT CODE HERE
 ######################################################################
+
+
+@app.route('/health', methods=['GET'])
+def health():
+    """Report that the Songs API is running."""
+    return jsonify(status='OK'), 200
